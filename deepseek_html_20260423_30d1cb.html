@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Stop violenței – Alegem bunătatea | Joc interactiv pentru copii</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* Evită selectarea textului pe butoane, dar păstrează accesibilitatea */
+        }
+
+        body {
+            background: linear-gradient(145deg, #b8e1fc 0%, #d9f0ff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Comic Neue', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Nunito', sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* Container joc */
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background: #fffef7;
+            border-radius: 60px 60px 70px 70px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2), 0 0 0 8px #f9e7b3, 0 0 0 12px #ffb347;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* Header cu titlu (design prietenos) */
+        .game-header {
+            background: #ffb882;
+            padding: 20px 25px 15px 25px;
+            text-align: center;
+            border-bottom: 5px solid #ff914d;
+        }
+
+        .game-header h1 {
+            font-size: 2rem;
+            color: #2d3e50;
+            text-shadow: 3px 3px 0 #ffdd99;
+            letter-spacing: -0.5px;
+            word-break: break-word;
+        }
+
+        .sub {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #fff0c0;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 40px;
+            margin-top: 8px;
+            color: #c44f1b;
+        }
+
+        /* Zona întrebare / scor */
+        .quiz-area {
+            padding: 25px 30px 15px 30px;
+        }
+
+        .score-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            background: #fef5e0;
+            border-radius: 100px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            border: 2px solid #ffe2aa;
+        }
+
+        .score-box {
+            background: #ffa559;
+            padding: 5px 15px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.6rem;
+        }
+
+        .question-counter {
+            background: #c5e0d4;
+            padding: 5px 15px;
+            border-radius: 50px;
+            color: #2a5f4b;
+        }
+
+        /* Situație / întrebare */
+        .situation-card {
+            background: #fff2df;
+            border-radius: 65px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 #ffe0b5;
+            border: 2px solid #ffd8a5;
+        }
+
+        .situation-text {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #2c3e2f;
+            background: white;
+            border-radius: 60px;
+            padding: 18px 12px;
+            display: inline-block;
+            width: 100%;
+            box-shadow: inset 0 0 0 2px #fff, 0 5px 0 #ddc;
+        }
+
+        .emoji-big {
+            font-size: 3.3rem;
+            display: block;
+            margin-top: 6px;
+        }
+
+        /* Opțiuni răspunsuri */
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 15px 0 20px;
+        }
+
+        .answer-btn {
+            background: #fce9cf;
+            border: 3px solid #fdba6a;
+            border-radius: 120px;
+            padding: 14px 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: inherit;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.1s linear;
+            color: #3b2a1f;
+            box-shadow: 0 5px 0 #cb8b42;
+        }
+
+        .answer-btn:hover {
+            transform: scale(0.98);
+            background: #ffe0b7;
+        }
+
+        .answer-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #cb8b42;
+        }
+
+        .answer-emoji {
+            font-size: 2rem;
+            background: white;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .answer-text {
+            flex: 1;
+        }
+
+        /* Feedback mesaj */
+        .feedback {
+            background: #eef4ff;
+            border-radius: 50px;
+            padding: 12px 20px;
+            margin: 15px 0 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-left: 12px solid #ffaa44;
+            transition: 0.2s;
+        }
+
+        /* Buton next / final */
+        .next-btn {
+            background: #6fbf4c;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: inherit;
+            border-radius: 50px;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 6px 0 #3b7a1f;
+            margin-top: 5px;
+        }
+
+        .next-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #3b7a1f;
+        }
+
+        .next-btn:disabled {
+            background: #ccccaa;
+            box-shadow: 0 6px 0 #8f8f6b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ecran final */
+        .final-screen {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .final-message {
+            font-size: 1.8rem;
+            background: #cbe6fe;
+            border-radius: 50px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: #ff884d;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 80%;
+            box-shadow: 0 6px 0 #aa4e1c;
+        }
+
+        .restart-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #aa4e1c;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #ffefcf;
+            font-size: 0.9rem;
+            color: #aa7343;
+        }
+
+        @media (max-width: 550px) {
+            .game-container {
+                border-radius: 40px;
+            }
+            .situation-text {
+                font-size: 1.3rem;
+            }
+            .answer-btn {
+                font-size: 1rem;
+                padding: 10px 12px;
+            }
+            .answer-emoji {
+                width: 42px;
+                height: 42px;
+                font-size: 1.5rem;
+            }
+            .score-area {
+                font-size: 1rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .correct-feedback {
+            background: #d4f2d4;
+            border-left-color: #3fa63f;
+            color: #1c591c;
+        }
+
+        .wrong-feedback {
+            background: #ffe0e0;
+            border-left-color: #e68181;
+            color: #a13a3a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container" id="gameContainer">
+    <div class="game-header">
+        <h1>🤝 Alege comportamentul corect 📢</h1>
+        <div class="sub">⭐ Stop violenței – alegem bunătatea ⭐</div>
+    </div>
+
+    <!-- Zona de joc principal (quiz dinamic) -->
+    <div id="quizPanel" class="quiz-area">
+        <div class="score-area">
+            <span>🏆 Scor prietenie</span>
+            <span class="score-box" id="scoreDisplay">0</span>
+            <span class="question-counter" id="questionCounter">Întrebarea 1 / 10</span>
+        </div>
+
+        <div id="dynamicContent">
+            <!-- aici se injectează situația, răspunsurile, feedback -->
+        </div>
+    </div>
+
+    <footer>
+        ❤️ În clasa noastră respect și bunătate - fii eroul anti-bullying!
+    </footer>
+</div>
+
+<script>
+    // ======================= DATELE JOCULUI (8-10 situații) =====================
+    // Fiecare întrebare: textSituatie, array answers: { text, emoji, corect (boolean), tipComportament (optional dar feedback) }
+    // corect = true dacă este comportamentul empatic/corect.
+    // Am definit 10 întrebări variate pentru clasele 3-4, tematice.
+    const questions = [
+        {
+            situation: "Un coleg este exclus din joc la fotbal. Ce faci? 🥺",
+            answers: [
+                { text: "Îl chemi și tu în echipa ta, spunând că toți contează", emoji: "🤗", corect: true },
+                { text: "Râzi și spui că nu e bun la fotbal", emoji: "😝", corect: false },
+                { text: "Nu faci nimic, nu e problema ta", emoji: "😐", corect: false }
+            ]
+        },
+        {
+            situation: "Cineva râde de greșeala unui coleg la tablă. Ce faci? 😢",
+            answers: [
+                { text: "Îl susții pe coleg: „Toți greșim, hai să învățăm împreună!”", emoji: "💪", corect: true },
+                { text: "Râzi și tu ca să pari „cool”", emoji: "😂", corect: false },
+                { text: "Mă uit în altă parte, nu vreau să mă implic", emoji: "😶", corect: false }
+            ]
+        },
+        {
+            situation: "Un coleg este trist și stă singur în bancă la pauză. Ce faci? 💔",
+            answers: [
+                { text: "Te duci lângă el și îl întrebi dacă vrea să se joace cu tine", emoji: "🧸", corect: true },
+                { text: "Îl ignori, ai de mâncat sendviș", emoji: "🍔", corect: false },
+                { text: "Îi spui altor colegi că e plângăcios", emoji: "🗣️", corect: false }
+            ]
+        },
+        {
+            situation: "Cineva împinge un copil la coadă, să treacă primul. Ce faci? 🚸",
+            answers: [
+                { text: "Îi spui ferm: „Nu e corect, fiecare așteaptă rândul!”", emoji: "✋", corect: true },
+                { text: "Împingi și tu pentru a te răzbuna", emoji: "👊", corect: false },
+                { text: "Taci și lași să se întâmple, nu e treaba mea", emoji: "🤐", corect: false }
+            ]
+        },
+        {
+            situation: "Un coleg nou e foarte timid și nimeni nu vorbește cu el. Ce faci? 🌱",
+            answers: [
+                { text: "Îl saluți, îi zâmbești și îl prezinți altor prieteni", emoji: "👋", corect: true },
+                { text: "Râzi de el pentru că e tăcut", emoji: "🙊", corect: false },
+                { text: "Nu îl bagi în seamă, e plictisitor", emoji: "😒", corect: false }
+            ]
+        },
+        {
+            situation: "Un coleg scapă pe jos toate creioanele. Câțiva râd și fac poze. Ce alegi? 📝",
+            answers: [
+                { text: "Îl ajuți să adune creioanele și spui „Nimic grav, se poate întâmpla!”", emoji: "🖍️", corect: true },
+                { text: "Râzi și faci o glumă proastă", emoji: "🤪", corect: false },
+                { text: "Stai și te uiți, dar nu faci nimic", emoji: "👀", corect: false }
+            ]
+        },
+        {
+            situation: "La ora de sport, cineva spune că un coleg „nu știe să alerge” și e încet. Reacția ta? 🏃‍♂️",
+            answers: [
+                { text: "Spui: „Fiecare învață în ritmul lui, hai să-l încurajăm!”", emoji: "📣", corect: true },
+                { text: "Râzi și repeti gluma", emoji: "😆", corect: false },
+                { text: "Pleci departe ca să nu fii asociat", emoji: "🚶", corect: false }
+            ]
+        },
+        {
+            situation: "Un coleg este poreclit urât de câțiva elevi. Tu ce faci? 😟",
+            answers: [
+                { text: "Le spui copiilor că poreclele rănesc și că e mai frumos să-l strigi pe nume", emoji: "🛡️", corect: true },
+                { text: "Folosești și tu porecla pentru a fi acceptat", emoji: "😈", corect: false },
+                { text: "Nu spui nimic, dar nici nu participi", emoji: "🤷", corect: false }
+            ]
+        },
+        {
+            situation: "La masă, un coleg a uitat să își ia sandvișul. Nimeni nu împarte. Ce faci? 🥪",
+            answers: [
+                { text: "Îți împarți mica gustare cu el și îi spui „Hai să mâncăm împreună!”", emoji: "🍎", corect: true },
+                { text: "Râzi și mănânci în fața lui, arătând cât de bun e", emoji: "😋", corect: false },
+                { text: "Nu faci nimic, e problema lui", emoji: "😤", corect: false }
+            ]
+        },
+        {
+            situation: "Doi colegi se ceartă din cauza unei mingi. Încerci să ...... 🏀",
+            answers: [
+                { text: "Îi calmezi, le spui să vorbească frumos și să se joace pe rând", emoji: "🤝", corect: true },
+                { text: "Încurajezi cearta: „Hai, luptați să văd cine e mai tare!”", emoji: "🥊", corect: false },
+                { text: "Fugi și chemi un adult, dar fără să încerci să ajuți tu", emoji: "📢", corect: false }   // nu e corect pentru că răspunsul empatic în situație presupune intervenția pozitivă
+            ]
+        }
+    ];
+
+    // Verificare: exact 10 întrebări
+    console.assert(questions.length === 10, "Avem 10 întrebări, perfect!");
+
+    // Variabile joc
+    let currentIndex = 0;          // index întrebare curentă (0-based)
+    let score = 0;                 // număr răspunsuri corecte
+    let quizActive = true;         // dacă nu este ecran final
+    let answerLock = false;        // după ce răspunde, blochează butoanele până la next
+    let selectedAnswerCorect = false; // momentan folosit pentru a preveni dublu răspuns
+
+    // Elemente DOM
+    const dynamicContent = document.getElementById('dynamicContent');
+    const scoreDisplaySpan = document.getElementById('scoreDisplay');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const quizPanel = document.getElementById('quizPanel');
+
+    // Funcție actualizare scor + contor pe ecran
+    function updateUIinfo() {
+        scoreDisplaySpan.innerText = score;
+        questionCounterSpan.innerText = `Întrebarea ${currentIndex+1} / ${questions.length}`;
+    }
+
+    // Funcție de reafișare întrebare curentă
+    function renderCurrentQuestion() {
+        if (!quizActive) return;
+        const q = questions[currentIndex];
+        if (!q) return;
+
+        // Construim structura HTML pentru întrebare
+        let answersHtml = '';
+        q.answers.forEach((ans, idx) => {
+            answersHtml += `
+                <div class="answer-btn" data-answer-index="${idx}">
+                    <span class="answer-emoji">${ans.emoji}</span>
+                    <span class="answer-text">${escapeHtml(ans.text)}</span>
+                </div>
+            `;
+        });
+
+        const html = `
+            <div class="situation-card">
+                <div class="situation-text">
+                    ${escapeHtml(q.situation)}
+                    <span class="emoji-big"></span>
+                </div>
+            </div>
+            <div class="answers" id="answersContainer">
+                ${answersHtml}
+            </div>
+            <div id="feedbackArea" class="feedback hidden">✨</div>
+            <button id="nextButton" class="next-btn" disabled>➡️ Întrebarea următoare</button>
+        `;
+
+        dynamicContent.innerHTML = html;
+
+        // atașăm event listeners la butoanele de răspuns
+        const answerBtns = document.querySelectorAll('.answer-btn');
+        const nextBtn = document.getElementById('nextButton');
+
+        answerBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (answerLock) return;
+                const idxAttr = btn.getAttribute('data-answer-index');
+                if (idxAttr === null) return;
+                const answerIdx = parseInt(idxAttr, 10);
+                handleAnswer(answerIdx);
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!answerLock) return; // nu s-a răspuns, next dezactivat, dar siguranță
+            goToNextQuestion();
+        });
+    }
+
+    // Funcție de procesare răspuns
+    function handleAnswer(selectedIdx) {
+        if (answerLock) return;
+        const currentQ = questions[currentIndex];
+        const selectedAnswer = currentQ.answers[selectedIdx];
+        const isCorrect = selectedAnswer.corect;
+
+        // actualizare scor dacă e corect
+        if (isCorrect) {
+            score++;
+            updateUIinfo();
+        }
+
+        // Blocăm selecția ulterioară
+        answerLock = true;
+        selectedAnswerCorect = isCorrect;
+
+        // Afișăm feedback în zona specială
+        const feedbackDiv = document.getElementById('feedbackArea');
+        if (feedbackDiv) {
+            feedbackDiv.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackDiv.innerHTML = `🎉❤️ Bravo! Ai ales empatia ❤️🎉<br> <span style="font-size:1rem;">„${escapeHtml(selectedAnswer.text)}” este un comportament plin de bunătate!</span>`;
+                feedbackDiv.className = "feedback correct-feedback";
+            } else {
+                feedbackDiv.innerHTML = `😢 Încearcă să alegi o reacție care ajută colegul! 🌟 <br> Gândește-te cum te-ai simți tu. Răspunsul corect este unul plin de respect.`;
+                feedbackDiv.className = "feedback wrong-feedback";
+            }
+        }
+
+        // Dezactivăm vizual butoanele răspuns (opacitate + cursor)
+        const allAnswerBtns = document.querySelectorAll('.answer-btn');
+        allAnswerBtns.forEach(btn => {
+            btn.style.opacity = '0.6';
+            btn.style.pointerEvents = 'none';
+        });
+
+        // Activăm butonul Next
+        const nextBtn = document.getElementById('nextButton');
+        if (nextBtn) {
+            nextBtn.disabled = false;
+        }
+
+        // Dacă răspuns greșit – dar oricum continuă, fără penalizare suplimentară
+        // Proiect blând
+    }
+
+    // Trecem la următoarea întrebare sau finalizare
+    function goToNextQuestion() {
+        if (!answerLock) return;  // nu răspuns încă
+
+        // Verificăm dacă mai sunt întrebări
+        if (currentIndex + 1 < questions.length) {
+            currentIndex++;
+            answerLock = false;
+            selectedAnswerCorect = false;
+            renderCurrentQuestion();
+            updateUIinfo(); // actualizam contor și scorul deja e corect
+        } else {
+            // Joc terminat – arătăm ecranul final cu scorul și mesajul motivațional
+            finishGame();
+        }
+    }
+
+    // Ecran final: scor final, mesaj motivațional, buton de reluare
+    function finishGame() {
+        quizActive = false;
+        const total = questions.length;
+        const finalScore = score;
+        // mesaj personalizat după procentaj
+        let motivationalMsg = "";
+        if (finalScore === total) {
+            motivationalMsg = "✨🌈 Supererou al bunătății! Ai ales respectul de fiecare dată! 🌈✨";
+        } else if (finalScore >= total-2) {
+            motivationalMsg = "🌟 Foarte bine! Ești un prieten empatic, continuă să fii bun(ă)! 🌟";
+        } else {
+            motivationalMsg = "💪 Fiecare greșeală e o lecție! Data viitoare vei fi și mai puternic(ă) în alegerea binelui! ❤️";
+        }
+
+        const finalHtml = `
+            <div class="final-screen">
+                <div style="font-size: 3rem;">🏅🎉</div>
+                <div class="final-message">
+                    <p style="font-size: 2rem; font-weight: bold;">Ai ${finalScore} din ${total} răspunsuri corecte!</p>
+                    <p style="font-size: 1.4rem;">${motivationalMsg}</p>
+                    <p style="font-size: 1.8rem; margin-top: 12px;">📢 În clasa noastră alegem respectul și bunătatea! 📢</p>
+                </div>
+                <button id="restartGameBtn" class="restart-btn">🔄 Joacă din nou 🔄</button>
+            </div>
+        `;
+
+        dynamicContent.innerHTML = finalHtml;
+        const restartBtn = document.getElementById('restartGameBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                resetGame();
+            });
+        }
+        // ascundem vizual scorul din header? îl păstrăm doar informativ, dar se vede scorul final separat. E ok, dar păstrăm actualizat.
+        scoreDisplaySpan.innerText = score;
+        questionCounterSpan.innerText = `Final! ${total}/${total}`;
+    }
+
+    // Reset complet joc
+    function resetGame() {
+        // reset variabile
+        currentIndex = 0;
+        score = 0;
+        quizActive = true;
+        answerLock = false;
+        selectedAnswerCorect = false;
+
+        // reinițializare UI
+        updateUIinfo();
+        renderCurrentQuestion();
+    }
+
+    // funcție mică de escaping împotriva XSS (siguranță, deși textul nostru este sigur)
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Inițializare joc la încărcare
+    function initGame() {
+        resetGame();
+    }
+
+    initGame();
+</script>
+</body>
+</html>
